@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html lang="de">
+    <head>
+        <meta charset="utf-8" />
+        <title>LES Report Generator</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="color-scheme" content="light dark">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    
+        <style type="text/css">
+            input#md-file[aria-invalid="true"] {
+                padding-left: 2.25px !important;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="container">
+            <form id="md-form" method="post" action="/" enctype="multipart/form-data">
+                <fieldset>
+                    <article>
+                        <header>
+                            <strong>Schritt 1: Division auswählen</strong>
+                        </header>
+                        <select name="team" aria-label="Division auswählen" required>
+                            <option selected disabled value="">Division auswählen</option>
+                            <option value="E-Sport-Management">E-Sport-Management</option>
+                            <option value="Hochschulen">Hochschulen</option>
+                            <option value="Öffentlichkeitsarbeit">Öffentlichkeitsarbeit</option>
+                            <option value="Technik">Technik</option>
+                            <option value="Veranstaltungen">Veranstaltungen</option>
+                            <option value="Vereinsheim">Vereinsheim</option>
+                        </select>
+                    </article>
+                    <article>
+                        <header>
+                            <strong>Schritt 2: Divisionsbericht hochladen</strong>
+                        </header>
+                        <p>
+                            Der Divisionsbericht muss im <a href="https://www.markdownguide.org/cheat-sheet/">Markdown-Format</a> vorliegen.
+                            Du kannst <strong>entweder</strong> eine Datei hochladen <strong>oder</strong> den Inhalt der Datei unten einfügen.
+                            Wenn du beides machst, wird die hochgeladene Datei verwendet.
+                            <p>
+                                <input id="md-file" type="file" name="md-file" aria-label="Divisionsbericht hochladen">
+                            </p>
+                            <p>
+                                <textarea id="md-content" name="md-content" placeholder="Inhalt des Divisionsberichts einfügen" aria-placeholder="Inhalt des Divisionsberichts einfügen"></textarea>
+                            </p>
+                        </p>
+                    </article>
+                    <input id="md-submit" type="submit" value="Divisionsbericht konvertieren" />
+                    <button id="md-wait" aria-busy="true" aria-label="Bitte warten…" class="outline secondary" disabled style="width: 100%; display: none;">Bitte warten…</button>
+                </fieldset>
+            </form>
+        </main>
+        <script>
+            const form = document.querySelector("#md-form");
+            const file = document.querySelector("#md-file");
+            const content = document.querySelector("#md-content");
+            const submit = document.querySelector("#md-submit");
+            const wait = document.querySelector("#md-wait");
+
+            let warnUser = false;
+
+            /**
+             * @param {boolean} to
+             */
+            const setWarnState = (to) => {
+                if (warnUser && !to) {
+                    file.removeAttribute("aria-invalid");
+                    content.removeAttribute("aria-invalid");
+                }
+
+                if (!warnUser && to) {
+                    file.setAttribute("aria-invalid", "true");
+                    content.setAttribute("aria-invalid", "true");
+                }
+
+                warnUser = to;
+            }
+
+            file.addEventListener("change", () => setWarnState(false));
+            content.addEventListener("input", () => setWarnState(false));
+
+            form.addEventListener("submit", (evt) => {
+                const data = new FormData(form);
+
+                const noFileSet = data.get("md-file").size == 0;
+                const noContentSet = data.get("md-content").trim().length == 0;
+
+                if (noFileSet && noContentSet) {
+                    setWarnState(true);
+                    evt.preventDefault();
+                    return
+                }
+
+                submit.style.display = "none";
+                wait.style.display = "block";
+            })
+        </script>
+    </body>
+</html>
