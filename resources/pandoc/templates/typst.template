@@ -6,11 +6,30 @@
   lang: "de"
 )
 
+#show link: underline
+#show link: set text(fill: rgb("#ff6700"))
+
+#show table.cell.where(y: 0): set text(weight: "bold")
+
+#let frame(stroke) = (x, y) => (
+  left: stroke,
+  right: stroke,
+  top: if y < 2 { stroke } else { 0pt },
+  bottom: stroke,
+)
+
+#set table(
+  stroke: frame(1pt + black),
+  fill: (_, y) => 
+    if calc.even(y) { gray.lighten(80%) } else { white }
+)
+
 #set page(
   paper: "a4",
   margin: (left: 2.5cm, right: 2.5cm, top: 4cm, bottom: 1.5cm),
   header: [
     #grid(
+      align: horizon,
       columns: (1fr, auto),
       [
         Divisionsbericht $team$ #datetime.today().display("[month repr:long] [year]") \
