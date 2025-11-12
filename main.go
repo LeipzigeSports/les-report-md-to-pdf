@@ -41,6 +41,15 @@ const indexSubPath = "static/index.html"
 const pandocFontsSubPath = "pandoc/fonts"
 const pandocTypstTemplateSubPath = "pandoc/templates/typst.template"
 
+var teamIdLookup = map[string]string{
+	"team-esm":  "E-Sport-Management",
+	"team-hs":   "Hochschulen",
+	"team-oea":  "Öffentlichkeitsarbeit",
+	"team-tech": "Technik",
+	"team-vs":   "Veranstaltungen",
+	"team-vh":   "Vereinsheim",
+}
+
 func tryDeleteFile(f *os.File) {
 	if err := os.Remove(f.Name()); err != nil {
 		log.Printf("failed to delete temporary file: %v\n", err)
@@ -66,13 +75,18 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		teamNameSlice, ok := r.MultipartForm.Value["team"]
-		if !ok || len(teamNameSlice) == 0 {
+		teamIdSlice, ok := r.MultipartForm.Value["team"]
+		if !ok || len(teamIdSlice) == 0 {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		teamName := teamNameSlice[0]
+		teamId := teamIdSlice[0]
+		teamName, ok := teamIdLookup[teamId]
+		if !ok {
+			w.WriteHeader(http.StatusBadRequest)
+			log.Printf("invalid team identifier: %v\n", teamId)
+		}
 
 		tmpIn, err := os.CreateTemp("", "pandoc-input-")
 		if err != nil {
