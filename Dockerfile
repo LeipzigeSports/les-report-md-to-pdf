@@ -10,6 +10,18 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /usr/local/bin/reportc
 
 FROM pandoc/typst:3.8.2-debian
 
+ARG LOCALE=de_DE.UTF-8
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN set -ex && \
+    apt-get update && apt-get install -y locales && \
+    sed -i -e "s/# ${LOCALE} UTF-8/${LOCALE} UTF-8/" /etc/locale.gen && \
+    dpkg-reconfigure locales && \
+    update-locale LANG=${LOCALE}
+
+ENV LANG=${LOCALE}
+
 WORKDIR /opt/reportconv
 
 COPY --from=builder /usr/local/bin/reportconv /opt/reportconv/reportconv
