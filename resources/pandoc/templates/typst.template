@@ -32,7 +32,7 @@
       align: horizon,
       columns: (1fr, auto),
       [
-        Divisionsbericht $team$ #datetime.today().display("[month repr:long] [year]") \
+        Divisionsbericht $team$ #datetime.today().display("[month padding:zero repr:numerical]/[year]") \
         Stand #datetime.today().display("[day].[month].[year]") | Leipzig eSports e.V.
       ],
       [
