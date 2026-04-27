@@ -145,7 +145,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 		cmdCtx, cmdCtxCancel := context.WithTimeout(r.Context(), cfg.pandocTimeout)
 		defer cmdCtxCancel()
 
-		cmd := exec.CommandContext(cmdCtx, cfg.pandocExecutable, tmpIn.Name(), "-f", "markdown", "-o", tmpOut.Name(), "-t", "pdf", "--template", cfg.pandocTypstTemplatePath, "-V", fmt.Sprintf("team=%v", teamName), "--pdf-engine", "typst", "--pdf-engine-opt", "--pdf-standard=a-2b")
+		cmd := exec.CommandContext(cmdCtx, cfg.pandocExecutable, tmpIn.Name(), "-f", "commonmark", "-o", tmpOut.Name(), "-t", "pdf", "--template", cfg.pandocTypstTemplatePath, "-V", fmt.Sprintf("team=%v", teamName), "--pdf-engine", "typst", "--pdf-engine-opt", "--pdf-standard=a-2b")
 		cmd.Env = append(cmd.Environ(), fmt.Sprintf("TYPST_FONT_PATHS=%v", cfg.pandocFontsPath))
 
 		log.Printf("executing %v", cmd.Args)

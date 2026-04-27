@@ -1,4 +1,4 @@
-FROM golang:1.25.3-trixie AS builder
+FROM golang:1.26.2-trixie AS builder
 
 WORKDIR /usr/src/app
 
@@ -6,9 +6,9 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY main.go .
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /usr/local/bin/reportconv .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -trimpath -o /usr/local/bin/reportconv .
 
-FROM pandoc/typst:3.8.2-debian
+FROM pandoc/typst:3.9.0-debian
 
 ARG LOCALE=de_DE.UTF-8
 
